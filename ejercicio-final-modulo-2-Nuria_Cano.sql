@@ -47,11 +47,11 @@ WHERE length > 120;
 ------------------------------------
 -- 5. Recupera los nombres de todos los actores.
 --
-SELECT CONCAT(first_name,' ',last_name) AS 'nombres'
+SELECT first_name AS 'nombres'
 FROM actor;
 
 -- Extra: Los ordenamos por nombre de forma ascendente
-SELECT CONCAT(first_name,' ',last_name) AS 'nombres'
+SELECT first_name AS 'nombres'
 FROM actor
 ORDER BY nombres;
 
@@ -327,6 +327,7 @@ ORDER BY nombre_y_apellido ASC;
 ------------------------------------
 -- BONUS
 -- 24. BONUS: Encuentra el título de las películas que son comedias y tienen una duración mayor a 180 minutos en la tabla film.
+--
 SELECT title
 FROM film
 WHERE length > 180 AND film_id IN (
@@ -342,27 +343,17 @@ WHERE length > 180 AND film_id IN (
 -- 25. BONUS: Encuentra todos los actores que han actuado juntos en al menos una película. 
 -- La consulta debe mostrar el nombre y apellido de los actores y el número de películas en las que han actuado juntos.
 --
-
-
-SELECT t1.actor_id AS 'id_actor_1', t2.actor_id AS 'id_actor_2', t1.film_id, t2.film_id
-FROM film_actor AS t1, film_actor AS t2
-WHERE t1.film_id = t2.film_id AND t1.actor_id <> t2.actor_id
-
-SELECT CONCAT(t1.actor_id,' ', t2.actor_id) AS 'actores', t1.film_id, t2.film_id
-FROM film_actor AS t1, film_actor AS t2
-WHERE t1.film_id = t2.film_id AND t1.actor_id <> t2.actor_id
-
-WITH actores_juntos AS (
-						SELECT t1.actor_id AS 'id_actor_1', t2.actor_id AS 'id_actor_2', t1.film_id AS 'film'
-                        FROM FROM film_actor AS t1, film_actor AS t2
-                        WHERE t1.film_id = t2.film_id AND t1.actor_id <> t2.actor_id)
-SELECT actor.first_name AS 'actor_1', actor.first_name AS 'actor_2', COUNT(actores.film)
-FROM actor
-INNER JOIN actores_juntos AS actores
-GROUP BY actor.first_name
-
-
-
+WITH acores_juntos (id_actor_1, id_actor_2, peli) AS (
+													SELECT t1.actor_id , t2.actor_id , t1.film_id
+													FROM film_actor t1, film_actor t2
+													WHERE t1.actor_id <> t2.actor_id AND t1.film_id = t2.film_id 
+													)
+SELECT CONCAT(i1.first_name,' ',i1.last_name) AS 'actor_1' , CONCAT(i2.first_name,' ',i2.last_name) AS 'actor_2', COUNT(peli)
+FROM acores_juntos
+INNER JOIN actor AS i1 ON i1.actor_id = acores_juntos.id_actor_1
+INNER JOIN actor AS i2 ON i2.actor_id = acores_juntos.id_actor_2
+GROUP BY actor_1, actor_2
+ORDER BY actor_1;
 
 
 
