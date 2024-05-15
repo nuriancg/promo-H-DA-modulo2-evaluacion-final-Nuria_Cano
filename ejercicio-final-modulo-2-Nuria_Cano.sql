@@ -110,8 +110,13 @@ GROUP BY rating;
 SELECT customer.customer_id AS 'ID_cliente', CONCAT(customer.first_name,' ',customer.last_name) AS 'nombre_y_apellido', COUNT(rental.rental_id) AS 'total_pelis_alquiladas'
 FROM customer
 INNER JOIN rental ON customer.customer_id = rental.customer_id
-GROUP BY rental.customer_id;
+GROUP BY customer.customer_id;
 
+-- Extra: Usamos un LEFT JOIN por si hay clientes que no han alquilado ninúna película. Estos apareceran con NULL en la columna de 'total_pelis_alquiladas'
+SELECT customer.customer_id AS 'ID_cliente', CONCAT(customer.first_name,' ',customer.last_name) AS 'nombre_y_apellido', COUNT(rental.rental_id) AS 'total_pelis_alquiladas'
+FROM customer
+LEFT JOIN rental ON customer.customer_id = rental.customer_id
+GROUP BY customer.customer_id;
 
 ------------------------------------
 -- 11. Encuentra la cantidad total de películas alquiladas por categoría y muestra el nombre de la categoría junto con el recuento de alquileres.
@@ -188,7 +193,7 @@ FROM actor
 UNION ALL
 SELECT COUNT(DISTINCT actor_id) 
 FROM film_actor
-	
+
 
 ------------------------------------
 -- 16. Encuentra el título de todas las películas que fueron lanzadas entre el año 2005 y 2010.
